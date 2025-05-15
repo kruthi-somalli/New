@@ -1,0 +1,82 @@
+Question 3: IAM with Tag-Based Access – Using Visual Editor Only
+
+⸻
+
+1. Create IAM Users with Tags
+
+For User1:
+	1.	Go to IAM → Users → Add users.
+	2.	Username: user1.
+	3.	Select Password - AWS Management Console access.
+	4.	Skip permission for now.
+	5.	In Tags, click Add tag:
+	•	Key: Department
+	•	Value: Engineering
+	6.	Click Next → Create user.
+
+For User2:
+
+Repeat steps above with:
+	•	Key: Department
+	•	Value: Finance
+
+⸻
+
+2. Tag S3 Buckets and EC2 Instances
+
+S3 Bucket:
+	1.	Go to S3 → Select or create a bucket.
+	2.	Click on the bucket name → Properties → Scroll to Tags → Edit or Add Tag.
+	3.	Add:
+	•	Key: Department
+	•	Value: Engineering or Finance
+
+EC2 Instance:
+	1.	Go to EC2 → Select an instance.
+	2.	Go to Tags tab → Click Manage tags or Add/Edit tags.
+	3.	Add:
+	•	Key: Department
+	•	Value: (match the user — Engineering or Finance)
+
+⸻
+
+3. Create IAM Policy Using Visual Editor
+	1.	Go to IAM → Policies → Create Policy.
+	2.	Choose the Visual editor.
+
+Set Permissions:
+	•	Service: Select S3
+	•	Action: PutObject
+	•	Resource: Choose All resources
+	•	Click Add another service
+	•	Service: EC2
+	•	Action: DescribeInstances
+	•	Resource: All resources
+
+Add Condition:
+	1.	Scroll to Request conditions (optional).
+	2.	Click Add condition.
+	3.	Set:
+	•	Condition key: aws:ResourceTag/Department
+	•	Operator: StringEquals
+	•	Value: ${aws:PrincipalTag/Department} (select Principal tag from dropdown or type manually)
+	4.	Click Next, name the policy (e.g., MatchByDepartment), and click Create policy.
+
+⸻
+
+4. Attach Policy to IAM Users
+	1.	Go to IAM → Users → Select user1.
+	2.	Go to Permissions → Add permissions.
+	3.	Choose Attach existing policies directly.
+	4.	Select your policy (MatchByDepartment) → Click Next → Add permissions.
+
+Repeat for user2.
+
+⸻
+
+5. Test Access (Optional)
+
+To test:
+	•	Log in to AWS as each user.
+	•	Try accessing the EC2 or S3 resources.
+	•	Users will only be allowed if their tag matches the resource tag.
